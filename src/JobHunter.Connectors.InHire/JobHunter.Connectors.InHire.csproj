@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\JobHunter.Connectors.Abstractions\JobHunter.Connectors.Abstractions.csproj" />
+    <ProjectReference Include="..\JobHunter.Connectors.Browser\JobHunter.Connectors.Browser.csproj" />
+  </ItemGroup>
+
+</Project>

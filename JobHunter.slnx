@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/JobHunter.Api/JobHunter.Api.csproj" />
+    <Project Path="src/JobHunter.Connectors.Abstractions/JobHunter.Connectors.Abstractions.csproj" />
+    <Project Path="src/JobHunter.Connectors.Browser/JobHunter.Connectors.Browser.csproj" />
+    <Project Path="src/JobHunter.Connectors.InHire/JobHunter.Connectors.InHire.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/JobHunter.Api.Tests/JobHunter.Api.Tests.csproj" />
+    <Project Path="tests/JobHunter.Connectors.InHire.Tests/JobHunter.Connectors.InHire.Tests.csproj" />
+    <Project Path="tests/JobHunter.Connectors.Testing/JobHunter.Connectors.Testing.csproj" />
+  </Folder>
+</Solution>
