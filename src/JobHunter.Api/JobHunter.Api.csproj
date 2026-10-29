@@ -9,4 +9,8 @@
     <ProjectReference Include="..\JobHunter.Connectors.InHire\JobHunter.Connectors.InHire.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
 </Project>
