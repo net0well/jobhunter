@@ -1,3 +1,4 @@
+using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
@@ -21,9 +22,11 @@ internal static class ObservabilityExtensions
             .WithTracing(tracing => tracing
                 .AddSource(JobHunterTelemetry.ServiceName)
                 .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation())
+                .AddHttpClientInstrumentation()
+                .AddNpgsql())
             .WithMetrics(metrics => metrics
                 .AddMeter(JobHunterTelemetry.ServiceName)
+                .AddNpgsqlInstrumentation()
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation());
 

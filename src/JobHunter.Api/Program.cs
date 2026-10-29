@@ -2,6 +2,7 @@ using System.Globalization;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Extensions;
 using JobHunter.Api.Common.Observability;
+using JobHunter.Api.Common.Persistence;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -14,6 +15,7 @@ try
 
     builder.Services.AddObservability(builder.Configuration);
     builder.Services.AddApiInfrastructure(builder.Configuration);
+    builder.Services.AddPersistence();
 
     var app = builder.Build();
 
