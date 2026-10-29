@@ -47,7 +47,7 @@ Nada sensível é versionado:
 ## Testes
 
 ```bash
-dotnet test --filter "Category!=Live"
+dotnet test --filter-not-trait "Category=Live"
 ```
 
 Os testes de integração sobem um PostgreSQL real via Testcontainers (Docker precisa estar rodando).

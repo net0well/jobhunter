@@ -111,7 +111,7 @@ jobs:
       - run: dotnet build --no-restore -c Release
       - name: Install Playwright browsers
         run: pwsh src/JobHunter.Api/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
-      - run: dotnet test --no-build -c Release --filter "Category!=Live" --logger trx
+      - run: dotnet test --no-build -c Release --filter-not-trait "Category=Live" --logger trx
 ```
 
 - Testcontainers funciona nos runners `ubuntu-latest` (Docker disponível).

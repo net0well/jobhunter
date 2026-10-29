@@ -382,8 +382,6 @@ Somente os **nomes** importam aqui: `X` é um marcador. Cada versão é resolvid
 
     <!-- Testes -->
     <PackageVersion Include="xunit.v3" Version="X" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="X" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="X" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="X" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="X" />
     <PackageVersion Include="Verify.XunitV3" Version="X" />

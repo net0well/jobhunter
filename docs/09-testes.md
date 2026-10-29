@@ -13,7 +13,7 @@ Princípios: integração primeiro, PostgreSQL real via Testcontainers, sem `Use
 | Arquitetura | `JobHunter.Api.Tests/Architecture` | Regras de dependência entre núcleo e conectores | Reflexão |
 | Live (manual) | `*/Live` | Conector contra a plataforma real, **somente leitura** | `[Trait("Category", "Live")]` |
 
-Comando padrão (local e CI): `dotnet test --filter "Category!=Live"`.
+Comando padrão (local e CI): `dotnet test --filter-not-trait "Category=Live"`.
 
 ## 2. Infraestrutura de integração
 
