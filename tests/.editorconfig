@@ -1,3 +1,5 @@
 [*.cs]
 # Test names follow Method_Scenario_Result
 dotnet_diagnostic.CA1707.severity = none
+# xUnit collection definitions are conventionally suffixed with Collection
+dotnet_diagnostic.CA1711.severity = none
