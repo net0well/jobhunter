@@ -21,11 +21,11 @@ ASP.NET Core (Minimal API + BackgroundServices) · EF Core + PostgreSQL · Playw
 ## Primeiro uso
 
 ```bash
-cp .env.example .env                 # defina POSTGRES_PASSWORD
+cp .env.example .env                 # defina POSTGRES_PASSWORD (e POSTGRES_PORT, se a 5432 estiver ocupada)
 docker compose up -d
 
 cd src/JobHunter.Api
-dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=jobhunter;Username=jobhunter;Password=<senha>"
+dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=<POSTGRES_PORT>;Database=jobhunter;Username=jobhunter;Password=<senha>"
 dotnet user-secrets set "Api:ApiKey" "<chave-longa-aleatória>"
 cd ../..
 

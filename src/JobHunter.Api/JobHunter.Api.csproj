@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <PropertyGroup>
+    <UserSecretsId>bd06c4c8-1cd0-45dc-937e-6c3bc916e12e</UserSecretsId>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\JobHunter.Connectors.Abstractions\JobHunter.Connectors.Abstractions.csproj" />
     <ProjectReference Include="..\JobHunter.Connectors.InHire\JobHunter.Connectors.InHire.csproj" />
