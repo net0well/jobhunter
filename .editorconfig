@@ -396,3 +396,7 @@ dotnet_diagnostic.IDE0005.severity = warning
 
 [*.{json,yml,yaml,xml,props,csproj,slnx}]
 indent_size = 2
+
+[*.cs]
+# Project convention is message templates on ILogger directly; log volume is low
+dotnet_diagnostic.CA1848.severity = none
