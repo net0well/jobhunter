@@ -20,6 +20,7 @@ try
     app.UseExceptionHandler();
     app.UseSerilogRequestLogging();
 
+    app.MapApiDocumentation();
     app.MapEndpoints();
 
     await app.RunAsync();

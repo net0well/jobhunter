@@ -21,6 +21,7 @@ internal static class ServiceCollectionExtensions
 
         services.AddValidatorsFromAssemblyContaining<ApiOptions>(includeInternalTypes: true);
         services.AddEndpointGroups();
+        services.AddOpenApi(options => options.AddDocumentTransformer<ApiKeySecuritySchemeTransformer>());
 
         return services;
     }
