@@ -1,14 +1,36 @@
+using System.Globalization;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Extensions;
+using JobHunter.Api.Common.Observability;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+    .CreateBootstrapLogger();
 
-builder.Services.AddApiInfrastructure(builder.Configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+    builder.Services.AddObservability(builder.Configuration);
+    builder.Services.AddApiInfrastructure(builder.Configuration);
 
-app.UseExceptionHandler();
+    var app = builder.Build();
 
-app.MapEndpoints();
+    app.UseExceptionHandler();
+    app.UseSerilogRequestLogging();
 
-app.Run();
+    app.MapEndpoints();
+
+    await app.RunAsync();
+}
+// The EF Core tooling aborts the host on purpose after building it.
+catch (Exception ex) when (ex is not HostAbortedException)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+    throw;
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}

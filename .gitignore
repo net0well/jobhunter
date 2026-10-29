@@ -511,3 +511,6 @@ Artifacts/
 sessions/
 resume/
 *.storage-state.json
+
+# Application logs
+logs/

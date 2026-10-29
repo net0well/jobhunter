@@ -45,7 +45,7 @@ dotnet ef database update --project src/JobHunter.Api
 dotnet run --project src/JobHunter.Api
 ```
 
-Abra `http://localhost:5080/scalar`, informe a API key e:
+Abra `http://localhost:5180/scalar`, informe a API key e:
 1. `PUT /api/profile` com seus dados;
 2. `POST /api/profile/resume` com o PDF;
 3. `POST /api/search-profiles`;

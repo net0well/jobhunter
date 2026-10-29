@@ -34,7 +34,7 @@ dotnet ef database update --project src/JobHunter.Api
 dotnet run --project src/JobHunter.Api
 ```
 
-A API de revisão fica em `http://localhost:5080` (documentação interativa em `/scalar` no ambiente Development).
+A API de revisão fica em `http://localhost:5180` (documentação interativa em `/scalar` no ambiente Development).
 
 ## Segredos e dados pessoais
 
