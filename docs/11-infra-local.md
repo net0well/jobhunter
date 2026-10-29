@@ -70,54 +70,18 @@ Containerizar a aplicação é possível (imagem base do Playwright para .NET), 
 
 ## 5. CI no GitHub Actions
 
-`.github/workflows/ci.yml`:
+`.github/workflows/ci.yml` tem três jobs:
 
-```yaml
-name: ci
+- `commit-messages` (só em PR): roda o hook `.githooks/commit-msg` em cada commit do PR;
+- `secrets`: gitleaks em todo o histórico, como segunda barreira além do secret scanning + push protection do GitHub;
+- `build-test`: `dotnet format --verify-no-changes`, build em Release e `dotnet test --filter-not-trait "Category=Live"`.
 
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-
-jobs:
-  commit-messages:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Validate commit messages
-        run: |
-          chmod +x .githooks/commit-msg
-          for sha in $(git rev-list ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}); do
-            git log -1 --format=%B "$sha" > /tmp/msg
-            .githooks/commit-msg /tmp/msg || { echo "Invalid message in $sha"; exit 1; }
-          done
-
-  build-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-      - run: dotnet restore
-      - run: dotnet format --verify-no-changes --no-restore
-      - run: dotnet build --no-restore -c Release
-      - name: Install Playwright browsers
-        run: pwsh src/JobHunter.Api/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
-      - run: dotnet test --no-build -c Release --filter-not-trait "Category=Live" --logger trx
-```
+Quando o Playwright entrar, o `build-test` ganha o passo `pwsh src/JobHunter.Api/bin/Release/net10.0/playwright.ps1 install --with-deps chromium` antes dos testes.
 
 - Testcontainers funciona nos runners `ubuntu-latest` (Docker disponível).
 - O job `commit-messages` aplica no GitHub as mesmas regras do hook local (Conventional Commits, sem trailers de coautoria), então commits que escaparam do hook local são barrados no PR.
 - Confira as versões atuais das actions (`actions/checkout`, `actions/setup-dotnet`) ao criar o arquivo.
-- Na proteção da branch `main`, marque os checks `build-test` e `commit-messages` como obrigatórios.
+- Na proteção da branch `main`, marque os checks `build-test`, `secrets` e `commit-messages` como obrigatórios.
 
 ## 6. Arquivos de raiz adicionais
 
