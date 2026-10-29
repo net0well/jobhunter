@@ -1,3 +1,4 @@
+using JobHunter.Api.Common.Health;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -20,6 +21,11 @@ internal static class PersistenceExtensions
                 provider.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString,
                 npgsql => npgsql.EnableRetryOnFailure())
             .UseSnakeCaseNamingConvention());
+
+        services.AddHealthChecks().AddNpgSql(
+            provider => provider.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString!,
+            name: "postgres",
+            tags: [HealthTags.Ready]);
 
         return services;
     }

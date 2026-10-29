@@ -1,6 +1,7 @@
 using System.Globalization;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Extensions;
+using JobHunter.Api.Common.Health;
 using JobHunter.Api.Common.Observability;
 using JobHunter.Api.Common.Persistence;
 using Serilog;
@@ -22,6 +23,7 @@ try
     app.UseExceptionHandler();
     app.UseSerilogRequestLogging();
 
+    app.MapHealthEndpoints();
     app.MapApiDocumentation();
     app.MapEndpoints();
 
