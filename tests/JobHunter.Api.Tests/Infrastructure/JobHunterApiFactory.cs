@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Persistence;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +10,7 @@ namespace JobHunter.Api.Tests.Infrastructure;
 
 public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public const string ApiKey = "integration-tests-api-key-0123456789abcdef";
+    public static readonly string ApiKey = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
 
     private readonly PostgresFixture _postgres = new();
 

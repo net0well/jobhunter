@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Options;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,7 @@ namespace JobHunter.Api.Tests.Common.Endpoints;
 
 public sealed class ApiKeyEndpointFilterTests
 {
-    private const string ValidKey = "test-api-key-with-at-least-32-characters";
+    private static readonly string ValidKey = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
 
     private static readonly object NextResult = new();
 
@@ -24,14 +25,19 @@ public sealed class ApiKeyEndpointFilterTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("wrong-key")]
-    [InlineData(ValidKey + "x")]
     public async Task InvokeAsync_MissingOrWrongKey_ReturnsUnauthorized(string? providedKey)
     {
         var result = await InvokeAsync(new ApiOptions { ApiKey = ValidKey }, providedKey);
 
-        var problem = Assert.IsType<ProblemHttpResult>(result);
-        Assert.Equal(StatusCodes.Status401Unauthorized, problem.StatusCode);
-        Assert.Equal("Api.InvalidApiKey", problem.ProblemDetails.Extensions["code"]);
+        AssertUnauthorized(result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ValidKeyWithExtraCharacter_ReturnsUnauthorized()
+    {
+        var result = await InvokeAsync(new ApiOptions { ApiKey = ValidKey }, providedKey: ValidKey + "x");
+
+        AssertUnauthorized(result);
     }
 
     [Fact]
@@ -40,6 +46,13 @@ public sealed class ApiKeyEndpointFilterTests
         var result = await InvokeAsync(new ApiOptions { RequireApiKey = false }, providedKey: null);
 
         Assert.Same(NextResult, result);
+    }
+
+    private static void AssertUnauthorized(object? result)
+    {
+        var problem = Assert.IsType<ProblemHttpResult>(result);
+        Assert.Equal(StatusCodes.Status401Unauthorized, problem.StatusCode);
+        Assert.Equal("Api.InvalidApiKey", problem.ProblemDetails.Extensions["code"]);
     }
 
     private static async Task<object?> InvokeAsync(ApiOptions options, string? providedKey)
