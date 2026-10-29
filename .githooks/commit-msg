@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+msg_file="$1"
+msg="$(grep -v '^#' "$msg_file")"
+subject="$(head -n1 <<< "$msg")"
+
+if grep -qiE 'co-authored-by|generated with|cl[a]ude|\bai[- ]generated' <<< "$msg"; then
+  echo "commit-msg: message mentions tooling or co-authorship trailers." >&2
+  exit 1
+fi
+
+if grep -qi 'anthr[o]pic' <<< "$msg" && ! grep -qiE ': .*anthr[o]pic (answer|api|client|suggester)' <<< "$subject"; then
+  echo "commit-msg: provider name is only allowed when changing that API integration." >&2
+  exit 1
+fi
+
+if grep -qiE '\bspec[ -]?[0-9]+|\bfase[ -]?[0-9]+|\bphase[ -]?[0-9]+|\bAC-[0-9]+|\bADR-[0-9]+' <<< "$msg"; then
+  echo "commit-msg: describe the code change instead of referencing planning documents." >&2
+  exit 1
+fi
+
+if ! grep -qE '^(feat|fix|refactor|test|chore|docs|perf|build|ci)(\([a-z0-9-]+\))?: .{3,}$' <<< "$subject"; then
+  echo "commit-msg: use Conventional Commits, e.g. 'feat: add inhire job listing parser'." >&2
+  exit 1
+fi
+
+if [ "${#subject}" -gt 72 ]; then
+  echo "commit-msg: subject longer than 72 characters." >&2
+  exit 1
+fi
