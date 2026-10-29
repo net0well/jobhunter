@@ -1,0 +1,3 @@
+# Fixed test-only API keys from before tests generated them at runtime
+4a288da5ff05f8fc3d2525db82190cbd96f1638e:tests/JobHunter.Api.Tests/Infrastructure/JobHunterApiFactory.cs:generic-api-key:12
+9bbed425438ba57124cd7b0dd297719cc168fc4f:tests/JobHunter.Api.Tests/Common/Endpoints/ApiKeyEndpointFilterTests.cs:generic-api-key:11

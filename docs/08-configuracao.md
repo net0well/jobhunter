@@ -6,9 +6,9 @@ Options pattern com `ValidateDataAnnotations()` + `ValidateOnStart()`; `IOptions
 
 ```json
 {
+  "Urls": "http://localhost:5180",
   "App": {
-    "TimeZone": "America/Sao_Paulo",
-    "Urls": "http://localhost:5080"
+    "TimeZone": "America/Sao_Paulo"
   },
   "ConnectionStrings": {
     "Default": "Host=localhost;Port=5432;Database=jobhunter;Username=jobhunter"

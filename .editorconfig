@@ -29,13 +29,14 @@ indent_size = 4
 tab_width = 4
 
 # New line preferences
-insert_final_newline = false
+insert_final_newline = true
+end_of_line = lf
 
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
 
 # Organize usings
-dotnet_separate_import_directive_groups = true
+dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
 file_header_template = unset
 
@@ -396,3 +397,7 @@ dotnet_diagnostic.IDE0005.severity = warning
 
 [*.{json,yml,yaml,xml,props,csproj,slnx}]
 indent_size = 2
+
+[*.cs]
+# Project convention is message templates on ILogger directly; log volume is low
+dotnet_diagnostic.CA1848.severity = none
