@@ -24,23 +24,26 @@ Todos os workers:
 ## 2. Varredura (`ScanDueSources` → `ScanSource`)
 
 ```
-fontes = SourceTargets ativas e vencidas, ordenadas por next_scan_at, limitadas a BatchSize
+fontes = SourceTargets ativas e vencidas de conectores habilitados e não pausados,
+        ordenadas por next_scan_at, limitadas a BatchSize
 agrupar por connector_key
 para cada conector (em paralelo até Scanning:MaxParallelConnectors):
-    se ConnectorState.paused_until > agora → pular
-    para cada fonte do conector (sequencial):
+    para cada fonte do conector (sequencial, um scope por fonte):
         ScanSource(fonte)
+        se o erro foi de bloqueio (layout, captcha, autenticação, rate limit) → parar este conector no ciclo
 ```
 
 `ScanSource`:
 1. Resolve a capacidade conforme `kind`: `ITenantJobSource`, `ISearchJobSource` ou `IFeedJobSource`.
 2. Chama via `ConnectorInvoker` (rate limit + resiliência + métricas).
-3. Sucesso → `UpsertPostings` com os itens; atualiza `checkpoint` (feed/busca); `RecordSuccess`.
+3. Sucesso → `PostingUpserter` com os itens; vagas novas sem descrição têm os detalhes buscados na hora (via `ConnectorInvoker`; falha deixa o `ScanRun` como `PartiallySucceeded`); atualiza `checkpoint` (feed/busca); `RecordSuccess` na fonte e no `ConnectorState`.
 4. Para fontes `Tenant`: incrementa `missed_scans` das `PostingSource` daquele conector + fonte que **não** vieram na lista; fecha vagas cujas fontes todas atingiram `ClosedAfterMissedScans`.
-5. Falha → `RecordFailure`; erros `LayoutChanged`/`CaptchaDetected`/`AuthenticationRequired` pausam o conector (`ConnectorState.Pause(until, reason)`) e notificam.
+5. Falha → `RecordFailure` (desativa a fonte após `Scanning:DeactivateAfterFailures` e notifica); `LayoutChanged`/`CaptchaDetected`/`AuthenticationRequired` pausam o conector por `Scanning:BlockedPauseDuration` (6 h), `RateLimited` com `RetryAfter` pausa pelo tempo pedido, e notificam. Erros gerados pelo próprio núcleo (`Connector.Paused`, rate limit local) não contam como falha da fonte.
 6. Grava `ScanRun`.
 
-`UpsertPostings` aplica a deduplicação descrita em `docs/02-arquitetura.md` §4.3 e resolve o canal com `ApplyChannelResolver`. Para itens sem descrição, enfileira `RefreshPostingDetails` (se o conector tem `PostingDetails`), respeitando o rate limit.
+`PostingUpserter` (`Features/Postings/Shared`) aplica a deduplicação descrita em `docs/02-arquitetura.md` §4.3, cria a `Company` quando não existe, reabre vagas fechadas que reaparecem e resolve o canal com `ApplyChannelResolver`.
+
+`POST /api/sources/{id}/scan` cria o `ScanRun` como `Running` e o coloca numa fila em memória (`ScanRequestQueue`); o `ManualScanWorker` consome a fila e executa o mesmo `ScanSource`.
 
 ## 3. Pontuação (`ScorePendingPostings`)
 
@@ -51,14 +54,14 @@ para cada conector (em paralelo até Scanning:MaxParallelConnectors):
 | Empresa bloqueada | descarta (`CompanyBlocked`) |
 | `excluded_keywords` no título | descarta (`ExcludedKeyword:<termo>`) |
 | Nenhuma `required_keywords` em título/descrição | descarta (`MissingRequired`) |
-| `required_keywords` no título | + peso `title` |
-| `preferred_keywords` na descrição | + peso `description` por termo (com teto) |
+| `required_keywords` ou `preferred_keywords` no título | + peso `title` |
+| `preferred_keywords` na descrição | + peso `description` proporcional; 3 termos (ou todos, se forem menos) já valem o peso cheio |
 | Local compatível (cidade em `locations` ou `Remote` aceito) | + peso `location`; incompatível e não remoto → descarta |
 | Modelo de trabalho aceito | + peso `workModel` |
 | Senioridade compatível | + peso `seniority`; ausente = neutro |
-| `excluded_description_keywords` | − penalidade |
+| `excluded_description_keywords` | − `descriptionPenalty` por termo, até 30 pontos |
 
-Resultado normalizado 0–100. `score >= min_score` → `Matched`. `match_reasons` guarda cada regra aplicada para você entender a nota.
+Regras sem dado de um dos lados (vaga sem local ou senioridade, perfil sem critério) ficam fora do cálculo; a nota é a soma dos pesos atendidos sobre a soma dos pesos aplicáveis, 0–100, menos a penalidade. Com vários perfis ativos vale o melhor resultado. Sem perfil ativo, as vagas continuam `New`. `score >= min_score` → `Matched`; abaixo → `Discarded` com `LowScore`. `match_reasons` guarda cada regra aplicada para você entender a nota.
 
 ## 4. Preparação (`PrepareApplication`)
 
