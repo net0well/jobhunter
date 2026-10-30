@@ -65,7 +65,7 @@ internal sealed class ConnectorInvoker(
                 operation,
                 ct);
 
-            return (ConnectorResult<T>)outcome.Result;
+            return (ConnectorResult<T>)outcome.BoxedResult;
         }
         catch (BrokenCircuitException ex)
         {
