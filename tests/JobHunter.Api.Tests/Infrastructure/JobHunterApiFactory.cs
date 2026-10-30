@@ -4,7 +4,9 @@ using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Persistence;
 using JobHunter.Connectors.Abstractions;
 using JobHunter.Connectors.Abstractions.Sources;
+using JobHunter.Connectors.InHire;
 using JobHunter.Connectors.Testing.Fakes;
+using JobHunter.Connectors.Testing.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -24,11 +26,16 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
 
     public static readonly string ApiKey = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
 
-    private static readonly string[] ConnectorKeys = [FakeConnector.Key, SecondFakeKey, SearchOnlyKey];
+    private static readonly string[] ConnectorKeys = [FakeConnector.Key, SecondFakeKey, SearchOnlyKey, InHireConnectorRegistration.Key];
 
     private readonly PostgresFixture _postgres = new();
 
+    private readonly string _artifacts = Path.Combine(Path.GetTempPath(), "jobhunter-tests", Guid.NewGuid().ToString("N"));
+
     public FakeTimeProvider Clock { get; } = new(new DateTimeOffset(2026, 10, 29, 12, 0, 0, TimeSpan.Zero));
+
+    // The real InHire connector is enabled by appsettings; its HTTP calls are answered here so no test leaves the machine.
+    public FixtureHttpHandler InHireHttp { get; } = new();
 
     public FakeConnector Fake => Services.GetRequiredKeyedService<FakeConnector>(FakeConnector.Key);
 
@@ -56,6 +63,7 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
     {
         Fake.Reset();
         SecondFake.Reset();
+        InHireHttp.Clear();
         await Services.GetRequiredService<ConnectorCircuitStates>().CloseAllAsync(CancellationToken.None);
 
         await using var scope = Services.CreateAsyncScope();
@@ -69,9 +77,14 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
         builder.UseSetting($"ConnectionStrings:{DatabaseOptions.ConnectionStringName}", _postgres.ConnectionString);
         builder.UseSetting("Api:ApiKey", ApiKey);
 
+        builder.UseSetting("Artifacts:RootPath", _artifacts);
+
+        // Courtesy delays run on the fake clock and would never elapse; tests check spacing in the rate limiter tests.
         foreach (var key in ConnectorKeys)
         {
             builder.UseSetting($"Connectors:{key}:RequestsPerMinute", "600");
+            builder.UseSetting($"Connectors:{key}:PolitenessDelayMin", "00:00:00");
+            builder.UseSetting($"Connectors:{key}:PolitenessDelayMax", "00:00:00");
         }
 
         foreach (var worker in new[] { "SourceScan", "Matching", "ManualScan" })
@@ -87,6 +100,9 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
             services.AddFakeConnector(SecondFakeKey);
             services.AddSingleton<IJobConnector>(new StubConnector(SearchOnlyKey, ConnectorCapabilities.Search));
             services.AddKeyedSingleton<ISearchJobSource>(SearchOnlyKey, (_, _) => new FakeConnector(TimeProvider.System, SearchOnlyKey));
+            services.AddHttpClient(InHireConnectorRegistration.HttpClientName)
+                .ConfigurePrimaryHttpMessageHandler(() => InHireHttp)
+                .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
         });
     }
 
@@ -94,5 +110,9 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
     {
         await base.DisposeAsync();
         await _postgres.DisposeAsync();
+        InHireHttp.Dispose();
+
+        if (Directory.Exists(_artifacts))
+            Directory.Delete(_artifacts, recursive: true);
     }
 }

@@ -165,7 +165,7 @@ public sealed class ScanningTests(JobHunterApiFactory factory) : IAsyncLifetime
         factory.Fake.Tenants["acme"] =
         [
             Posting("own"),
-            SourcedPostingBuilder.Default("acme", "foreign").WithTitle("Data Engineer").WithApplyUrl(SampleUrls.Postings["inhire"]).Build(),
+            SourcedPostingBuilder.Default("acme", "foreign").WithTitle("Data Engineer").WithApplyUrl(SampleUrls.Postings["gupy"]).Build(),
             SourcedPostingBuilder.Default("acme", "none").WithTitle("QA Analyst").WithApplyUrl(null).Build(),
         ];
 

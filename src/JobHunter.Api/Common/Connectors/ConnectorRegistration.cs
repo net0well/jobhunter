@@ -1,6 +1,7 @@
 using JobHunter.Api.Common.Observability;
 using JobHunter.Api.Common.Options;
 using JobHunter.Connectors.Abstractions.Evidence;
+using JobHunter.Connectors.InHire;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
@@ -11,6 +12,8 @@ internal static class ConnectorRegistration
 {
     public static IServiceCollection AddConnectors(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddInHireConnector(configuration);
+
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<JobHunterMetrics>();
 

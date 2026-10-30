@@ -31,7 +31,7 @@ public sealed class DependencyRulesTests
         string[] forbidden = [ApiAssembly, "Microsoft.EntityFrameworkCore", "Npgsql"];
 
         var violations =
-            from assembly in ConnectorAssemblies().Append(Assembly.Load(BrowserAssembly))
+            from assembly in ConnectorAssemblies().Concat(LoadIfDeployed(BrowserAssembly))
             from reference in ReferencedAssemblies(assembly)
             where forbidden.Any(prefix => reference.StartsWith(prefix, StringComparison.Ordinal))
             select $"{assembly.GetName().Name} -> {reference}";
@@ -68,6 +68,25 @@ public sealed class DependencyRulesTests
 
         Assert.Empty(violations.Distinct());
     }
+
+    // Only the composition root may name concrete connectors, and even it only calls their registration method.
+    [Fact]
+    public void HostTypes_ExposeNoConcreteConnectorTypes()
+    {
+        var connectorNames = ConnectorAssemblies().Select(assembly => assembly.GetName().Name).Append(BrowserAssembly).ToHashSet();
+
+        var violations =
+            from type in typeof(AppDbContext).Assembly.GetTypes()
+            from dependency in DependenciesOf(type)
+            where connectorNames.Contains(dependency.Assembly.GetName().Name)
+            select $"{type.FullName} -> {dependency.FullName}";
+
+        Assert.Empty(violations.Distinct());
+    }
+
+    // Shared connector infrastructure is only copied to the output once some connector depends on it.
+    private static IEnumerable<Assembly> LoadIfDeployed(string name) =>
+        File.Exists(Path.Combine(AppContext.BaseDirectory, $"{name}.dll")) ? [Assembly.Load(name)] : [];
 
     private static IEnumerable<string> ReferencedAssemblies(Assembly assembly) =>
         assembly.GetReferencedAssemblies().Select(reference => reference.Name!);
