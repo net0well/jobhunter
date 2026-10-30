@@ -1,0 +1,13 @@
+{
+  "tenant": {
+    "id": "eyxo",
+    "name": "Eyxo Content Co.",
+    "status": "active"
+  },
+  "subdomain": {
+    "current": "eyxo",
+    "tenantId": "eyxo",
+    "isPrimary": true,
+    "primarySubdomain": "eyxo"
+  }
+}

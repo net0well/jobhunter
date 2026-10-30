@@ -61,8 +61,10 @@ internal static class ScanSource
             if (run is not null)
                 return run;
 
+            // Saved right away so a manual trigger or the next worker tick sees this source is already being scanned.
             run = ScanRun.Start(source, clock.GetUtcNow());
             db.ScanRuns.Add(run);
+            await db.SaveChangesAsync(ct);
             return run;
         }
 

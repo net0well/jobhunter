@@ -5,3 +5,4 @@
 *.png binary
 *.jpg binary
 *.pdf binary
+*.verified.txt text eol=lf

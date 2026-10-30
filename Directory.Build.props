@@ -10,6 +10,10 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Required for IDE0005 on build; XML docs are not used, so missing-comment warnings are off -->
     <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <!-- Verify maintenance-fee exemption: personal open source project without revenue. Renew before it expires. -->
+    <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
+    <Verify_SponsorshipExemptionUntil>2027-10</Verify_SponsorshipExemptionUntil>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsTestProject)' != 'true'">

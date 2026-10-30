@@ -1,6 +1,7 @@
 using JobHunter.Api.Common.Connectors;
 using JobHunter.Api.Common.Options;
 using JobHunter.Api.Common.Persistence;
+using JobHunter.Api.Features.Scanning.Shared;
 using JobHunter.Connectors.Abstractions.Results;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ internal static class ScanDueSources
             var due = await db.SourceTargets.AsNoTracking()
                 .Where(source => source.IsActive && source.NextScanAt <= now)
                 .Where(source => enabled.Contains(source.ConnectorKey) && !paused.Contains(source.ConnectorKey))
+                .Where(source => !RunningScans.SourceIds(db, now).Contains(source.Id))
                 .OrderBy(source => source.NextScanAt)
                 .Take(command.BatchSize)
                 .Select(source => new { source.Id, source.ConnectorKey })
@@ -63,7 +65,7 @@ internal static class ScanDueSources
             return new Response(scanned);
         }
 
-        private async Task<Shared.ScanRunResponse?> ScanAsync(Guid sourceId, string connectorKey, CancellationToken ct)
+        private async Task<ScanRunResponse?> ScanAsync(Guid sourceId, string connectorKey, CancellationToken ct)
         {
             try
             {

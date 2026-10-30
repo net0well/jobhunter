@@ -256,17 +256,16 @@ JobHunter/
 │       ├── InHireConnector.cs
 │       ├── InHireConnectorRegistration.cs
 │       ├── InHireOptions.cs
-│       ├── InHireUrls.cs
-│       ├── InHireSelectors.cs
+│       ├── InHireUrls.cs                               # tenant e URL de vaga
+│       ├── Api/InHireApiClient.cs                      # HTTP na API pública da página (ADR-009)
 │       ├── Sources/InHireTenantSource.cs
 │       ├── Details/InHireDetailsProvider.cs
-│       ├── Applications/
-│       │   ├── InHireApplicationChannel.cs
-│       │   └── InHireFieldSemantics.cs
-│       ├── Health/InHireHealthProbe.cs
+│       ├── Applications/InHireApplicationChannel.cs    # por enquanto só CanHandle
 │       └── Parsing/
+│           ├── InHireTenantParser.cs
 │           ├── InHireListingParser.cs
 │           ├── InHireDetailsParser.cs
+│           ├── HtmlText.cs                             # HTML da descrição → texto (AngleSharp)
 │           └── InHireModels.cs
 │
 └── tests/
@@ -457,7 +456,7 @@ appsettings.*.local.json
 |---|---|
 | `JobHunter.Api` | `Connectors.Abstractions`, `Connectors.InHire` |
 | `JobHunter.Connectors.Browser` | `Connectors.Abstractions` |
-| `JobHunter.Connectors.InHire` | `Connectors.Abstractions`, `Connectors.Browser` |
+| `JobHunter.Connectors.InHire` | `Connectors.Abstractions` (HTTP; `Connectors.Browser` só se o envio exigir navegador) |
 | `JobHunter.Connectors.Testing` | `Connectors.Abstractions` |
 | `JobHunter.Api.Tests` | `JobHunter.Api`, `Connectors.Testing` |
 | `JobHunter.Connectors.InHire.Tests` | `Connectors.InHire`, `Connectors.Testing` |
