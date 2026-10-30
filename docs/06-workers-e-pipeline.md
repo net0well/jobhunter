@@ -96,7 +96,11 @@ Execução:
 
 ## 6. `ConnectorInvoker`
 
-Ponto único de chamada do núcleo para conectores.
+Ponto único de chamada do núcleo para conectores. É *scoped* (lê `ConnectorState`) e não grava estado: quem chama decide o que registrar.
+
+Ordem: pausa em `ConnectorState` (`RateLimited` com código `Connector.Paused`, sem chamar o conector) → lease do rate limit → espaçamento de cortesia → pipeline Polly → métricas. A pipeline opera sobre um envelope `ConnectorCallOutcome(Error, Result)`, uma por conector e tipo de operação, independente do `T` do resultado. Exceções viram `Transient`: `Connector.CircuitOpen`, `Connector.Timeout` ou `Connector.Unhandled`.
+
+O trecho abaixo é a versão simplificada da ideia:
 
 ```csharp
 internal sealed class ConnectorInvoker(
@@ -148,7 +152,7 @@ O circuit breaker trata como falha `Transient` e `LayoutChanged`; `PostingClosed
 ## 7. `ConnectorRateLimiter`
 
 - `PartitionedRateLimiter<string>` com partição por chave de conector: `ConcurrencyLimiter` (`MaxConcurrency`) + `TokenBucketRateLimiter` (`RequestsPerMinute`).
-- `PolitenessDelayAsync`: `Task.Delay(Random.Shared.Next(min, max), clock, ct)`.
+- `PolitenessDelayAsync`: espaçamento com jitter **entre chamadas consecutivas** do mesmo conector e tipo (leitura ou envio). A primeira chamada não espera; as seguintes aguardam só o que falta do intervalo sorteado entre `min` e `max` (`Task.Delay(…, clock, ct)`). Assim um `submit-now` isolado não fica minutos parado.
 - O `BrowserProvider` aplica ainda o limite global de páginas (`Browser:MaxConcurrentPages`).
 
 ## 8. Instância única

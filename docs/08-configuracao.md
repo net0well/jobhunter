@@ -74,7 +74,9 @@ Options pattern com `ValidateDataAnnotations()` + `ValidateOnStart()`; `IOptions
       "DailySubmissionLimit": 5,
       "NavigationTimeout": "00:00:30",
       "ConfirmationTimeout": "00:00:20",
-      "ClosedAfterMissedScans": 2
+      "ClosedAfterMissedScans": 2,
+      "ReadTimeout": "00:01:00",
+      "SubmitTimeout": "00:02:00"
     }
   },
   "Serilog": {
@@ -145,10 +147,12 @@ public sealed class ConnectorOptions
     public TimeSpan SubmissionDelayMax { get; init; } = TimeSpan.FromMinutes(5);
     [Range(0, 50)] public int DailySubmissionLimit { get; init; } = 5;
     [Range(1, 10)] public int ClosedAfterMissedScans { get; init; } = 2;
+    public TimeSpan ReadTimeout { get; init; } = TimeSpan.FromMinutes(1);
+    public TimeSpan SubmitTimeout { get; init; } = TimeSpan.FromMinutes(2);
 }
 ```
 
-Registro com named options por conector: `services.AddOptions<ConnectorOptions>(key).Bind(configuration.GetSection($"Connectors:{sectionName}"))`. O nome da seção é declarado pelo conector (ex.: `InHire`) junto com a chave (`inhire`).
+Named options por conector: o nome é a chave do conector e a seção é `Connectors:<Key>`. Chaves de configuração não diferenciam maiúsculas, então `Connectors:InHire` vale para a chave `inhire`; conectores com hífen usam a seção com hífen (`Connectors:linkedin-alerts`). Os `Default*` dos `ConnectorTraits` são aplicados primeiro e a configuração sobrescreve. `IValidateOptions<ConnectorOptions>` valida faixas e `Min <= Max`; o `ConnectorRegistryValidator` resolve as options de cada conector no startup, então configuração inválida derruba a inicialização.
 
 Validação cruzada (`IValidateOptions<T>`): `PolitenessDelayMin <= PolitenessDelayMax`; `SubmissionWindow.Start < End`; `Llm:ApiKey` obrigatório se `Llm:Enabled`.
 
