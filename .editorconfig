@@ -403,3 +403,6 @@ indent_size = 2
 dotnet_diagnostic.CA1848.severity = none
 # Result types expose Ok/Fail factories on the generic type by design
 dotnet_diagnostic.CA1000.severity = none
+
+[**/Migrations/*.cs]
+generated_code = true

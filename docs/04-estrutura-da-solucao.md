@@ -151,9 +151,14 @@ JobHunter/
 │   │       │   ├── ConnectorRegistry.cs
 │   │       │   ├── ConnectorRegistryValidator.cs
 │   │       │   ├── ConnectorInvoker.cs                 # rate limit + Polly + métricas
+│   │       │   ├── ConnectorPipelines.cs               # pipelines Polly por conector (read/submit)
+│   │       │   ├── ConnectorCallOutcome.cs             # envelope único para as pipelines
+│   │       │   ├── ConnectorCircuitStates.cs           # estado do circuito exposto em /api/connectors
 │   │       │   ├── ConnectorRateLimiter.cs
 │   │       │   ├── ConnectorErrorMapper.cs             # ConnectorError -> Error
 │   │       │   ├── ApplyChannelResolver.cs
+│   │       │   ├── ConfigureConnectorOptions.cs        # traits como default + Connectors:<Key>
+│   │       │   ├── ValidateConnectorOptions.cs
 │   │       │   └── ConnectorOptions.cs                 # Connectors:<Key> comuns
 │   │       ├── Persistence/
 │   │       │   ├── AppDbContext.cs
@@ -190,6 +195,7 @@ JobHunter/
 │   │   ├── ConnectorDescriptor.cs
 │   │   ├── ConnectorCapabilities.cs
 │   │   ├── ConnectorTraits.cs
+│   │   ├── ConnectorCapabilityServices.cs          # capacidade -> interface de serviço
 │   │   ├── Results/
 │   │   │   ├── ConnectorResult.cs
 │   │   │   ├── ConnectorError.cs
