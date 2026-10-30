@@ -170,6 +170,16 @@ internal sealed class JobPosting
         return Result.Success();
     }
 
+    // Sends the posting back to scoring, e.g. after its company was blocked or unblocked.
+    public bool RequestRescore()
+    {
+        if (!CanBeScored)
+            return false;
+
+        Status = JobPostingStatus.New;
+        return true;
+    }
+
     public Result Discard(string reason)
     {
         if (Status is not (JobPostingStatus.New or JobPostingStatus.Matched))

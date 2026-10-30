@@ -2,6 +2,9 @@ namespace JobHunter.Api.Domain;
 
 internal sealed class PostingSource
 {
+    // Postings imported by URL that no connector recognizes.
+    public const string ManualConnectorKey = "manual";
+
     private PostingSource(
         Guid id,
         Guid jobPostingId,
