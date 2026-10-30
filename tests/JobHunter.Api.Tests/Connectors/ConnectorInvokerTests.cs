@@ -108,6 +108,24 @@ public sealed class ConnectorInvokerTests(JobHunterApiFactory factory) : IAsyncL
         Assert.Equal(3, calls);
     }
 
+    [Fact]
+    public async Task InvokeAsync_RepeatedLayoutChanges_OpensCircuitUntilClosed()
+    {
+        var layoutChanged = ConnectorResult<bool>.Fail(new ConnectorError(ConnectorErrorKind.LayoutChanged, "Fake.Layout", "Markup changed"));
+
+        for (var call = 0; call < 10; call++)
+        {
+            await InvokeAsync((invoker, ct) => invoker.InvokeAsync(FakeConnector.Key, _ => Task.FromResult(layoutChanged), ct));
+        }
+
+        var whileOpen = await InvokeAsync((invoker, ct) => invoker.InvokeAsync(FakeConnector.Key, token => factory.Fake.ProbeAsync(token), ct));
+        await factory.Services.GetRequiredService<ConnectorCircuitStates>().CloseAllAsync(TestContext.Current.CancellationToken);
+        var afterClose = await InvokeAsync((invoker, ct) => invoker.InvokeAsync(FakeConnector.Key, token => factory.Fake.ProbeAsync(token), ct));
+
+        Assert.Equal("Connector.CircuitOpen", whileOpen.Error?.Code);
+        Assert.True(afterClose.IsSuccess);
+    }
+
     private async Task<ConnectorResult<T>> InvokeAsync<T>(Func<ConnectorInvoker, CancellationToken, Task<ConnectorResult<T>>> invoke)
     {
         await using var scope = factory.Services.CreateAsyncScope();

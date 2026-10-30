@@ -59,6 +59,7 @@ internal static class ConnectorPipelines
                 SamplingDuration = TimeSpan.FromMinutes(10),
                 BreakDuration = TimeSpan.FromMinutes(15),
                 StateProvider = services.GetRequiredService<ConnectorCircuitStates>().ProviderFor(connectorKey),
+                ManualControl = services.GetRequiredService<ConnectorCircuitStates>().ControlFor(connectorKey),
                 ShouldHandle = new PredicateBuilder<ConnectorCallOutcome>()
                     .Handle<Exception>(exception => exception is not OperationCanceledException)
                     .HandleResult(outcome => outcome.Error?.Kind is ConnectorErrorKind.Transient or ConnectorErrorKind.LayoutChanged),
