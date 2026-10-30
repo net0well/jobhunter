@@ -1,4 +1,5 @@
 using System.Globalization;
+using JobHunter.Api.Common.Connectors;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Extensions;
 using JobHunter.Api.Common.Health;
@@ -17,6 +18,7 @@ try
     builder.Services.AddObservability(builder.Configuration);
     builder.Services.AddApiInfrastructure(builder.Configuration);
     builder.Services.AddPersistence();
+    builder.Services.AddConnectors(builder.Configuration);
 
     var app = builder.Build();
 
