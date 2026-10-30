@@ -1,4 +1,6 @@
 using JobHunter.Api.Common.Observability;
+using JobHunter.Api.Common.Options;
+using JobHunter.Connectors.Abstractions.Evidence;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
@@ -15,6 +17,12 @@ internal static class ConnectorRegistration
         services.AddSingleton<IConfigureOptions<ConnectorOptions>>(provider =>
             ActivatorUtilities.CreateInstance<ConfigureConnectorOptions>(provider, configuration));
         services.AddSingleton<IValidateOptions<ConnectorOptions>, ValidateConnectorOptions>();
+
+        services.AddOptions<ArtifactsOptions>()
+            .Bind(configuration.GetSection(ArtifactsOptions.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        services.TryAddSingleton<IConnectorEvidenceStore, FileEvidenceStore>();
 
         services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
         services.AddSingleton<ConnectorRateLimiter>();
