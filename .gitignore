@@ -514,3 +514,6 @@ resume/
 
 # Application logs
 logs/
+
+# Verify snapshots awaiting review
+*.received.*
