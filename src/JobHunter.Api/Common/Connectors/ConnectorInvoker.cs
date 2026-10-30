@@ -18,6 +18,10 @@ internal sealed class ConnectorInvoker(
     TimeProvider clock,
     ILogger<ConnectorInvoker> logger)
 {
+    public const string PausedCode = "Connector.Paused";
+
+    public const string LocalRateLimitCode = "Connector.RateLimited";
+
     public async Task<ConnectorResult<T>> InvokeAsync<T>(
         string connectorKey,
         Func<CancellationToken, Task<ConnectorResult<T>>> operation,
@@ -31,11 +35,11 @@ internal sealed class ConnectorInvoker(
 
         var now = clock.GetUtcNow();
         if (pausedUntil > now)
-            return Fail<T>("Connector.Paused", $"Connector {connectorKey} is paused until {pausedUntil:O}.", pausedUntil - now);
+            return Fail<T>(PausedCode, $"Connector {connectorKey} is paused until {pausedUntil:O}.", pausedUntil - now);
 
         using var lease = await rateLimiter.AcquireAsync(connectorKey, ct);
         if (!lease.IsAcquired)
-            return Fail<T>("Connector.RateLimited", "Local rate limit reached.");
+            return Fail<T>(LocalRateLimitCode, "Local rate limit reached.");
 
         await rateLimiter.PolitenessDelayAsync(connectorKey, kind, ct);
 

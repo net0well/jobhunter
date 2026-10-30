@@ -52,6 +52,14 @@ internal sealed class SourceEndpoints : IEndpointGroup
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status404NotFound);
 
+        sources.MapPost("/{id:guid}/scan", async (Guid id, ISender sender, CancellationToken ct) =>
+                (await sender.Send(new TriggerSourceScan.Command(id), ct)).ToHttpResult(run => TypedResults.Accepted((string?)null, run)))
+            .WithName("TriggerSourceScan")
+            .WithSummary("Queues an immediate scan of the source")
+            .Produces<TriggerSourceScan.Response>(StatusCodes.Status202Accepted)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status503ServiceUnavailable);
+
         sources.MapDelete("/{id:guid}", async (Guid id, ISender sender, CancellationToken ct) =>
                 (await sender.Send(new DeleteSource.Command(id), ct)).ToHttpResult(() => TypedResults.NoContent()))
             .WithName("DeleteSource")

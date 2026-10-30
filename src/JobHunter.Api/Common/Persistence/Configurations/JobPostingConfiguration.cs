@@ -10,6 +10,7 @@ internal sealed class JobPostingConfiguration : IEntityTypeConfiguration<JobPost
     public void Configure(EntityTypeBuilder<JobPosting> builder)
     {
         builder.HasKey(posting => posting.Id);
+        builder.Property(posting => posting.Id).ValueGeneratedNever();
 
         builder.Property(posting => posting.Title).HasMaxLength(300);
         builder.Property(posting => posting.NormalizedTitle).HasMaxLength(300);

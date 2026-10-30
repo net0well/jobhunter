@@ -9,6 +9,7 @@ internal sealed class CompanyConfiguration : IEntityTypeConfiguration<Company>
     public void Configure(EntityTypeBuilder<Company> builder)
     {
         builder.HasKey(company => company.Id);
+        builder.Property(company => company.Id).ValueGeneratedNever();
 
         builder.Property(company => company.Name).HasMaxLength(200);
         builder.Property(company => company.NormalizedName).HasMaxLength(200);

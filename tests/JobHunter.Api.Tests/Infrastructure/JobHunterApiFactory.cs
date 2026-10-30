@@ -41,6 +41,8 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
         await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
     }
 
+    public DbScope OpenDb() => new(Services.CreateAsyncScope());
+
     public HttpClient CreateApiClient()
     {
         var client = CreateClient();

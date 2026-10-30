@@ -9,6 +9,7 @@ internal sealed class SourceTargetConfiguration : IEntityTypeConfiguration<Sourc
     public void Configure(EntityTypeBuilder<SourceTarget> builder)
     {
         builder.HasKey(source => source.Id);
+        builder.Property(source => source.Id).ValueGeneratedNever();
 
         builder.Property(source => source.ConnectorKey).HasMaxLength(64);
         builder.Property(source => source.TenantRef).HasMaxLength(200);

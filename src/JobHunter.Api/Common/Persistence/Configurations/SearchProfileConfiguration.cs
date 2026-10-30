@@ -9,6 +9,7 @@ internal sealed class SearchProfileConfiguration : IEntityTypeConfiguration<Sear
     public void Configure(EntityTypeBuilder<SearchProfile> builder)
     {
         builder.HasKey(profile => profile.Id);
+        builder.Property(profile => profile.Id).ValueGeneratedNever();
 
         builder.Property(profile => profile.Name).HasMaxLength(100);
         builder.PrimitiveCollection(profile => profile.WorkModels).ElementType().HasConversion<string>();

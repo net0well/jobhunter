@@ -108,7 +108,10 @@ internal sealed class JobPosting
             JobPostingStatus.New,
             DedupConfidence.Exact,
             now,
-            now);
+            now)
+        {
+            Company = company,
+        };
 
         posting.Apply(snapshot, company.NormalizedName);
         return posting;

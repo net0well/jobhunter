@@ -9,6 +9,7 @@ internal sealed class PostingSourceConfiguration : IEntityTypeConfiguration<Post
     public void Configure(EntityTypeBuilder<PostingSource> builder)
     {
         builder.HasKey(source => source.Id);
+        builder.Property(source => source.Id).ValueGeneratedNever();
 
         builder.Property(source => source.ConnectorKey).HasMaxLength(64);
         builder.Property(source => source.ExternalId).HasMaxLength(300);

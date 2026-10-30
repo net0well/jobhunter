@@ -9,6 +9,7 @@ internal sealed class ScanRunConfiguration : IEntityTypeConfiguration<ScanRun>
     public void Configure(EntityTypeBuilder<ScanRun> builder)
     {
         builder.HasKey(run => run.Id);
+        builder.Property(run => run.Id).ValueGeneratedNever();
 
         builder.Property(run => run.ConnectorKey).HasMaxLength(64);
         builder.Property(run => run.ErrorMessage).HasMaxLength(ScanRun.ErrorMessageMaxLength);
