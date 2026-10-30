@@ -8,7 +8,7 @@ using JobHunter.Connectors.Abstractions.Sources;
 
 namespace JobHunter.Connectors.Testing.Fakes;
 
-public sealed partial class FakeConnector(TimeProvider clock) :
+public sealed partial class FakeConnector(TimeProvider clock, string key = FakeConnector.Key) :
     IJobConnector,
     ITenantJobSource,
     ISearchJobSource,
@@ -21,8 +21,6 @@ public sealed partial class FakeConnector(TimeProvider clock) :
 {
     public const string Key = "fake";
 
-    public static readonly Uri BaseUrl = new("https://jobs.fake.test/");
-
     private const ConnectorCapabilities AllCapabilities =
         ConnectorCapabilities.TenantListing | ConnectorCapabilities.Search | ConnectorCapabilities.Feed |
         ConnectorCapabilities.PostingDetails | ConnectorCapabilities.ApplicationInspect | ConnectorCapabilities.ApplicationSubmit |
@@ -31,8 +29,8 @@ public sealed partial class FakeConnector(TimeProvider clock) :
     private readonly ConcurrentQueue<object> _scripted = new();
 
     public ConnectorDescriptor Descriptor { get; } = new(
-        Key,
-        "Fake",
+        key,
+        key == Key ? "Fake" : $"Fake {key}",
         AllCapabilities,
         new ConnectorTraits(
             RequiresAuthentication: false,
@@ -60,11 +58,15 @@ public sealed partial class FakeConnector(TimeProvider clock) :
 
     public ConcurrentQueue<ApplicationSubmission> AssistedSessions { get; } = new();
 
-    public static Uri TenantUrl(string tenant) => new(BaseUrl, tenant);
+    public Uri OwnBaseUrl { get; } = BaseUrlFor(key);
 
-    public static Uri PostingUrl(string tenant, string externalId) => new(BaseUrl, $"{tenant}/{externalId}");
+    public static Uri BaseUrlFor(string key) => new($"https://jobs.{key}.test/");
 
-    public static Uri ApplyUrl(string tenant, string externalId) => new(BaseUrl, $"{tenant}/{externalId}/apply");
+    public static Uri TenantUrl(string tenant, string key = Key) => new(BaseUrlFor(key), tenant);
+
+    public static Uri PostingUrl(string tenant, string externalId, string key = Key) => new(BaseUrlFor(key), $"{tenant}/{externalId}");
+
+    public static Uri ApplyUrl(string tenant, string externalId, string key = Key) => new(BaseUrlFor(key), $"{tenant}/{externalId}/apply");
 
     public void FailNext(ConnectorError error) => _scripted.Enqueue(error);
 
@@ -101,10 +103,10 @@ public sealed partial class FakeConnector(TimeProvider clock) :
             : InvalidTenant(input);
     }
 
-    public Uri GetTenantUrl(TenantRef tenant) => TenantUrl(tenant.Value);
+    public Uri GetTenantUrl(TenantRef tenant) => new(OwnBaseUrl, tenant.Value);
 
     public bool CanHandle(Uri postingUrl) =>
-        postingUrl.IsAbsoluteUri && string.Equals(postingUrl.Host, BaseUrl.Host, StringComparison.OrdinalIgnoreCase);
+        postingUrl.IsAbsoluteUri && string.Equals(postingUrl.Host, OwnBaseUrl.Host, StringComparison.OrdinalIgnoreCase);
 
     public Task<ConnectorResult<IReadOnlyList<SourcedPosting>>> ListAsync(TenantRef tenant, CancellationToken ct) =>
         Respond(() => Tenants.TryGetValue(tenant.Value, out var postings)

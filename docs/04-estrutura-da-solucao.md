@@ -47,10 +47,14 @@ JobHunter/
 │   │   │   │   ├── ScanEndpoints.cs
 │   │   │   │   ├── ScanDueSources.cs
 │   │   │   │   ├── ScanSource.cs
-│   │   │   │   └── ListScanRuns.cs
+│   │   │   │   ├── ListScanRuns.cs
+│   │   │   │   └── Shared/ScanRequestQueue.cs      # fila das varreduras disparadas pela API
+│   │   │   ├── Companies/
+│   │   │   │   ├── CompanyEndpoints.cs
+│   │   │   │   ├── ListCompanies.cs
+│   │   │   │   └── SetCompanyBlocked.cs
 │   │   │   ├── Postings/
 │   │   │   │   ├── PostingEndpoints.cs
-│   │   │   │   ├── UpsertPostings.cs
 │   │   │   │   ├── ImportPostingFromUrl.cs
 │   │   │   │   ├── ListPostings.cs
 │   │   │   │   ├── GetPosting.cs
@@ -58,8 +62,8 @@ JobHunter/
 │   │   │   │   ├── RestorePosting.cs
 │   │   │   │   ├── RefreshPostingDetails.cs
 │   │   │   │   └── Shared/
-│   │   │   │       ├── PostingDeduplicator.cs
-│   │   │   │       └── PostingMappings.cs
+│   │   │   │       ├── PostingUpserter.cs              # upsert + deduplicação + canal
+│   │   │   │       └── PostingDetail.cs / PostingSummary.cs
 │   │   │   ├── Matching/
 │   │   │   │   ├── SearchProfileEndpoints.cs
 │   │   │   │   ├── ScorePendingPostings.cs
@@ -126,6 +130,8 @@ JobHunter/
 │   │   │       └── ProposalSource.cs
 │   │   │
 │   │   ├── Workers/
+│   │   │   ├── PeriodicCommandWorker.cs            # base: um command por tick, um scope por ciclo
+│   │   │   ├── ManualScanWorker.cs
 │   │   │   ├── SourceScanWorker.cs
 │   │   │   ├── MatchingWorker.cs
 │   │   │   ├── PreparationWorker.cs

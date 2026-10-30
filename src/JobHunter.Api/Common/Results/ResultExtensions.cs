@@ -7,6 +7,12 @@ internal static class ResultExtensions
             ? result.Error.ToProblemDetails()
             : throw new InvalidOperationException("A successful result cannot be converted to problem details.");
 
+    public static IResult ToHttpResult(this Result result, Func<IResult> onSuccess) =>
+        result.IsSuccess ? onSuccess() : result.Error.ToProblemDetails();
+
+    public static IResult ToHttpResult<T>(this Result<T> result, Func<T, IResult> onSuccess) =>
+        result.IsSuccess ? onSuccess(result.Value) : result.Error.ToProblemDetails();
+
     public static IResult ToProblemDetails(this Error error) =>
         TypedResults.Problem(
             detail: error.Message,

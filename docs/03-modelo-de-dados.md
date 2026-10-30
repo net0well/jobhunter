@@ -37,7 +37,7 @@ erDiagram
 | `normalized_name` | text | único; sem acento, minúsculo, sem sufixos societários |
 | `website` | text null | |
 | `notes` | text null | |
-| `is_blocked` | bool | se `true`, vagas desta empresa são descartadas na pontuação |
+| `is_blocked` | bool | se `true`, vagas desta empresa são descartadas na pontuação (`POST /api/companies/{id}/block`; as vagas abertas voltam para `New` e são pontuadas de novo) |
 | `created_at` | timestamptz | |
 
 Criada automaticamente no upsert de vagas a partir de `SourcedPosting.CompanyName` (ou do nome do tenant) quando não existir.
@@ -64,7 +64,7 @@ Criada automaticamente no upsert de vagas a partir de `SourcedPosting.CompanyNam
 
 Índices: único `(connector_key, tenant_ref)` quando `kind = 'Tenant'` (índice parcial); `(is_active, next_scan_at)`.
 
-Métodos: `RecordSuccess(now, nextInterval)`, `RecordFailure(now, errorCode, threshold)`, `Deactivate()`, `Reactivate(now)`, `UpdateCheckpoint(value)`.
+Métodos: `RecordSuccess(now, nextInterval)`, `RecordFailure(now, errorCode, nextInterval, threshold)` (retorna `true` quando desativa), `Deactivate()`, `Reactivate(now)`, `UpdateCheckpoint(value)`.
 
 ### 2.3 `JobPosting` — vaga canônica
 
@@ -95,7 +95,9 @@ Métodos: `RecordSuccess(now, nextInterval)`, `RecordFailure(now, errorCode, thr
 | `first_seen_at` | timestamptz | |
 | `last_seen_at` | timestamptz | |
 | `closed_at` | timestamptz null | |
-| `discard_reason` | text null | |
+| `discard_reason` | text null | `LowScore`, `CompanyBlocked`, `ExcludedKeyword:<termo>`, `MissingRequired`, `LocationMismatch` ou o motivo informado no descarte manual |
+| `is_manually_discarded` | bool | descarte manual; o recálculo de notas não mexe nessas vagas |
+| `status_before_close` | text null | permite que `Reopen` devolva a vaga ao estado certo |
 | `version` | xid | |
 
 Índices: `(status)`, `(fingerprint, first_seen_at)`, `(company_id)`, `(match_score desc) where status = 'Matched'`.
@@ -114,9 +116,11 @@ stateDiagram-v2
     Discarded --> Closed
     InApplication --> Closed: vaga encerrada antes do envio
     Discarded --> Matched: Restore
+    Closed --> New: Reopen (vaga reapareceu, sem candidatura)
+    Closed --> InApplication: Reopen (fechou durante a candidatura)
 ```
 
-Métodos: `Score(score, reasons, profileId, minScore)`, `Discard(reason)`, `Restore()`, `StartApplication()`, `Close(now)`, `Touch(now)` (atualiza `last_seen_at`), `AssignChannel(key?)`, `UpdateFrom(details)`.
+Métodos: `ApplyMatch(result, profileId, minScore)`, `RequestRescore()`, `Discard(reason)`, `Restore()`, `Close(now)`, `Reopen()`, `Refresh(snapshot, company, now)` (atualiza dados e `last_seen_at`), `AssignChannel(key?)`, `UpdateFrom(details, now)`, `MarkProbableDuplicate()`. `StartApplication()` entra com as candidaturas.
 
 Uma vaga `Closed` com candidatura `Submitted` mantém a candidatura como está.
 
@@ -242,7 +246,7 @@ Métodos (todos retornam `Result`): `MarkPendingReview(form)`, `UpdateAnswer(fie
 | `source_target_id` | uuid FK | |
 | `connector_key` | text | |
 | `started_at`, `finished_at` | timestamptz | |
-| `status` | text | `Succeeded` \| `PartiallySucceeded` \| `Failed` |
+| `status` | text | `Running` \| `Succeeded` \| `PartiallySucceeded` \| `Failed` (`Running` enquanto a varredura disparada pela API aguarda ou executa) |
 | `found` | int | itens retornados |
 | `created` | int | vagas novas |
 | `updated` | int | |

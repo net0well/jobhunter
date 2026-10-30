@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FluentValidation;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Errors;
@@ -24,6 +25,21 @@ internal static class ServiceCollectionExtensions
             .Bind(configuration.GetSection(AppOptions.Section))
             .Validate(options => TimeZoneInfo.TryFindSystemTimeZoneById(options.TimeZone, out _), "App:TimeZone is not a known time zone id.")
             .ValidateOnStart();
+
+        services.AddOptions<ScanningOptions>()
+            .Bind(configuration.GetSection(ScanningOptions.Section))
+            .ValidateDataAnnotations()
+            .Validate(options => options.BlockedPauseDuration > TimeSpan.Zero, "Scanning:BlockedPauseDuration must be positive.")
+            .ValidateOnStart();
+
+        services.AddOptions<WorkersOptions>()
+            .Bind(configuration.GetSection(WorkersOptions.Section))
+            .Validate(
+                options => new[] { options.SourceScan, options.Matching, options.ManualScan }.All(schedule => schedule.TickInterval > TimeSpan.Zero && schedule.BatchSize > 0),
+                "Workers:*:TickInterval and BatchSize must be positive.")
+            .ValidateOnStart();
+
+        services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         services.AddMediator((MediatorOptions options) =>
         {

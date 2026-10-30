@@ -54,11 +54,11 @@ O `code` vai no ProblemDetails em `extensions.code` para a UI poder reagir.
 |---|---|---|---|
 | GET | `/api/sources?connector=&active=` | Lista fontes | |
 | GET | `/api/sources/{id}` | Detalhe com últimas execuções | 404 |
-| POST | `/api/sources` | Cria fonte. Body: `{ connectorKey, kind, input, displayName?, scanInterval? }`. Para `Tenant`, `input` é URL ou id; o conector faz `ParseTenant` | 400 `Source.InvalidInput`; 409 `Source.Duplicate`; 409 `Connector.CapabilityMissing`; 404 `Connector.NotFound` |
+| POST | `/api/sources` | Cria fonte. Body: `{ connectorKey, kind, input?, searchCriteria?, displayName?, scanInterval? }`. `Tenant` exige `input` (URL ou id; o conector faz `ParseTenant`); `Search` exige `searchCriteria: { keywords, location?, workModels?, maxResults? }`; `Feed` não tem input (um por conector). `scanInterval` entre 5 min e 7 dias | 400 `Source.InvalidInput`; 409 `Source.Duplicate`; 409 `Connector.CapabilityMissing`; 404 `Connector.NotFound` |
 | POST | `/api/sources/import` | Importa várias: `{ connectorKey, inputs: string[] }`. Retorna criadas, duplicadas e inválidas | 400 |
 | PUT | `/api/sources/{id}` | Atualiza nome, intervalo, ativo | 404 |
 | DELETE | `/api/sources/{id}` | Remove a fonte (vagas permanecem) | 404 |
-| POST | `/api/sources/{id}/scan` | Varredura imediata; 202 com `scanRunId` | 404; 503 `Connector.Paused` |
+| POST | `/api/sources/{id}/scan` | Enfileira varredura imediata; 202 com `scanRunId` (`ScanRun` nasce `Running`) | 404; 503 `Connector.Paused`; 503 `Connector.Disabled`; 503 `Scan.QueueFull` |
 
 ### Varreduras
 
@@ -72,11 +72,19 @@ O `code` vai no ProblemDetails em `extensions.code` para a UI poder reagir.
 |---|---|---|---|
 | GET | `/api/postings?status=&connector=&minScore=&q=&page=` | Lista paginada, ordenada por `match_score desc, first_seen_at desc` | |
 | GET | `/api/postings/{id}` | Detalhe com fontes, motivos do score, canal de candidatura | 404 |
-| POST | `/api/postings/import` | `{ url }` — importa vaga por URL: usa o `IJobDetailsProvider` que aceitar a URL; senão cria registro mínimo com `connector_key = "manual"` | 400; 409 `Posting.AlreadyExists` |
-| POST | `/api/postings/{id}/discard` | `{ reason }` | 404; 409 |
+| POST | `/api/postings/import` | `{ url, title?, companyName? }` — importa vaga por URL: usa o `IJobDetailsProvider` que aceitar a URL; senão cria registro mínimo com `connector_key = "manual"` (exige `title`; empresa vem de `companyName` ou do host) | 400 `Posting.TitleRequired`; 409 `Posting.AlreadyExists` |
+| POST | `/api/postings/{id}/discard` | `{ reason }` — descarte manual, preservado pelo recálculo | 404; 409 |
 | POST | `/api/postings/{id}/restore` | Volta para `Matched` | 404; 409 |
 | POST | `/api/postings/{id}/refresh` | Atualiza detalhes pelo conector | 404; 409 `Connector.CapabilityMissing` |
 | POST | `/api/postings/{id}/apply` | Cria a candidatura agora (dispara `PrepareApplication`) | 404; 409 `Application.AlreadyExists`; 422 `Posting.ManualApplyOnly` |
+
+### Empresas
+
+| Verbo | Rota | Descrição | Erros |
+|---|---|---|---|
+| GET | `/api/companies?blocked=&q=` | Empresas vistas nas vagas, com contagem de vagas | |
+| POST | `/api/companies/{id}/block` | Bloqueia; as vagas abertas voltam para `New` e a pontuação as descarta (`CompanyBlocked`) | 404 |
+| POST | `/api/companies/{id}/unblock` | Desbloqueia; as vagas descartadas pelo bloqueio voltam para a pontuação | 404 |
 
 ### Perfis de busca
 
@@ -87,6 +95,24 @@ O `code` vai no ProblemDetails em `extensions.code` para a UI poder reagir.
 | PUT | `/api/search-profiles/{id}` | Atualiza |
 | DELETE | `/api/search-profiles/{id}` | Remove |
 | POST | `/api/search-profiles/rescore` | Recalcula notas de vagas `New`/`Matched`/`Discarded` (não mexe em vagas com candidatura) |
+
+Exemplo de primeiro perfil (`POST /api/search-profiles`; campos omitidos ficam vazios, `minScore` padrão 60 e pesos padrão `title 35, description 25, location 15, workModel 15, seniority 10, descriptionPenalty 10`):
+
+```json
+{
+  "name": "Backend .NET",
+  "requiredKeywords": [".net", "c#"],
+  "preferredKeywords": ["asp.net core", "postgresql", "docker", "azure", "microsserviços"],
+  "excludedKeywords": ["estágio", "estagiário", "trainee"],
+  "excludedDescriptionKeywords": ["plantão", "sobreaviso"],
+  "locations": ["São Paulo", "Campinas"],
+  "workModels": ["Remote", "Hybrid"],
+  "seniorities": ["pleno", "sênior"],
+  "minScore": 60
+}
+```
+
+Regras sem dado (vaga sem local, perfil sem senioridades...) ficam fora da nota, que é normalizada sobre os pesos aplicáveis. Alterar um perfil não recalcula sozinho: use `rescore`.
 
 ### Candidaturas
 

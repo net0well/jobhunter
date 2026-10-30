@@ -19,6 +19,7 @@ Options pattern com `ValidateDataAnnotations()` + `ValidateOnStart()`; `IOptions
   "Workers": {
     "SourceScan":  { "Enabled": true, "TickInterval": "00:05:00", "BatchSize": 20 },
     "Matching":    { "Enabled": true, "TickInterval": "00:02:00", "BatchSize": 200 },
+    "ManualScan":  { "Enabled": true },
     "Preparation": { "Enabled": true, "TickInterval": "00:05:00", "BatchSize": 5 },
     "Submission":  { "Enabled": true, "TickInterval": "00:10:00", "BatchSize": 2 },
     "Maintenance": { "Enabled": true, "TickInterval": "01:00:00" }
@@ -26,7 +27,8 @@ Options pattern com `ValidateDataAnnotations()` + `ValidateOnStart()`; `IOptions
   "Scanning": {
     "MaxParallelConnectors": 2,
     "DeactivateAfterFailures": 5,
-    "RunRetentionDays": 90
+    "RunRetentionDays": 90,
+    "BlockedPauseDuration": "06:00:00"
   },
   "Applications": {
     "AutoPrepare": true,

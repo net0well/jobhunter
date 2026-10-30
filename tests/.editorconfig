@@ -3,3 +3,5 @@
 dotnet_diagnostic.CA1707.severity = none
 # xUnit collection definitions are conventionally suffixed with Collection
 dotnet_diagnostic.CA1711.severity = none
+# Inline arrays keep request bodies readable; tests are not hot paths
+dotnet_diagnostic.CA1861.severity = none
