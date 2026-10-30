@@ -1,0 +1,19 @@
+﻿{
+  ExternalId: Guid_1,
+  Title: Analista de Marketing de Influência Pleno (híbrido em POA),
+  DescriptionHtml: <p>Estamos buscando uma pessoa para atuar no time de <strong>marketing</strong>.</p><p><strong>Responsabilidades</strong></p><ul><li><p>Planejar campanhas com criadores de conteúdo;</p></li><li><p>Acompanhar indicadores &amp; resultados.</p></li></ul><p>Modelo híbrido, com encontros presenciais semanais.</p>,
+  DescriptionText:
+Estamos buscando uma pessoa para atuar no time de marketing.
+Responsabilidades
+- Planejar campanhas com criadores de conteúdo;
+- Acompanhar indicadores & resultados.
+Modelo híbrido, com encontros presenciais semanais.,
+  ApplyUrl: https://eyxo.inhire.app/vagas/5f8b856e-f4a1-486c-94c2-385c18e483e7,
+  IsOpen: true,
+  Extra: {
+    contractType: PJ,
+    location: Porto Alegre, RS, BR,
+    locationComplement: presencial 1x por semana,
+    workplaceType: Hybrid
+  }
+}

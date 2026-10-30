@@ -1,0 +1,13 @@
+{
+  "tenant": {
+    "id": "db1",
+    "name": "DB1 Group",
+    "status": "active"
+  },
+  "subdomain": {
+    "current": "db1",
+    "tenantId": "db1",
+    "isPrimary": true,
+    "primarySubdomain": "db1"
+  }
+}

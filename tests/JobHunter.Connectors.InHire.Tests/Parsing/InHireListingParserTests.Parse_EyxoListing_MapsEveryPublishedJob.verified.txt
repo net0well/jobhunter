@@ -1,0 +1,56 @@
+﻿[
+  {
+    ExternalId: Guid_1,
+    SourceUrl: https://eyxo.inhire.app/vagas/5f8b856e-f4a1-486c-94c2-385c18e483e7,
+    Title: Analista de Marketing de Influência Pleno (híbrido em POA),
+    CompanyName: Eyxo Content Co.,
+    Location: Porto Alegre, RS, BR,
+    WorkModel: Hybrid,
+    ApplyUrl: https://eyxo.inhire.app/vagas/5f8b856e-f4a1-486c-94c2-385c18e483e7
+  },
+  {
+    ExternalId: Guid_2,
+    SourceUrl: https://eyxo.inhire.app/vagas/2195c6bf-48f7-462e-8f7b-61a8991209ef,
+    Title: Banco de talentos | Eyxo,
+    CompanyName: Eyxo Content Co.,
+    Location: BR,
+    WorkModel: Remote,
+    ApplyUrl: https://eyxo.inhire.app/vagas/2195c6bf-48f7-462e-8f7b-61a8991209ef
+  },
+  {
+    ExternalId: Guid_3,
+    SourceUrl: https://eyxo.inhire.app/vagas/9530aaa1-e092-480d-ab9a-07971533f0b7,
+    Title: Estágio em Redação (híbrido em POA),
+    CompanyName: Eyxo Content Co.,
+    Location: Porto Alegre, RS, BR,
+    WorkModel: Hybrid,
+    ApplyUrl: https://eyxo.inhire.app/vagas/9530aaa1-e092-480d-ab9a-07971533f0b7
+  },
+  {
+    ExternalId: Guid_4,
+    SourceUrl: https://eyxo.inhire.app/vagas/a301a7ed-4948-4e41-b49d-0c1f0e465079,
+    Title: Redação Pleno | foco em Social (híbrido POA),
+    CompanyName: Eyxo Content Co.,
+    Location: Porto Alegre, RS, BR,
+    WorkModel: Hybrid,
+    ApplyUrl: https://eyxo.inhire.app/vagas/a301a7ed-4948-4e41-b49d-0c1f0e465079
+  },
+  {
+    ExternalId: Guid_5,
+    SourceUrl: https://eyxo.inhire.app/vagas/820fefa1-f0df-459f-9858-43e6575c241b,
+    Title: Social BI Pleno (híbrido em POA),
+    CompanyName: Eyxo Content Co.,
+    Location: Porto Alegre, RS, BR,
+    WorkModel: Hybrid,
+    ApplyUrl: https://eyxo.inhire.app/vagas/820fefa1-f0df-459f-9858-43e6575c241b
+  },
+  {
+    ExternalId: Guid_6,
+    SourceUrl: https://eyxo.inhire.app/vagas/6bd97d81-67ff-4827-9332-69c4a18f6c7c,
+    Title: Social BI Pleno (híbrido em SP),
+    CompanyName: Eyxo Content Co.,
+    Location: São Paulo, SP, BR,
+    WorkModel: Hybrid,
+    ApplyUrl: https://eyxo.inhire.app/vagas/6bd97d81-67ff-4827-9332-69c4a18f6c7c
+  }
+]

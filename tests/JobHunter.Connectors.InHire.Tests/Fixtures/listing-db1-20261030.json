@@ -1,0 +1,94 @@
+{
+  "tenantName": "DB1 Group",
+  "about": "<p>Texto institucional de exemplo.</p>",
+  "jobsPage": [
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Analista Administrativo (Facilities) Júnior",
+      "jobId": "8301be91-c2b3-4570-ae6b-3b9ff8963555",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    },
+    {
+      "careerPageIds": [
+        "default"
+      ],
+      "jobId": "22034ec3-8ee9-437c-a877-0dec16222287",
+      "careerPageId": "default",
+      "displayName": "Analista Jurídico (com foco em Licitações) Pleno",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Analista de  Performance (Engenharia de Software ) Sênior",
+      "jobId": "db37339e-0ab8-4644-bc3d-9f5b50f7cc92",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Analista de Agilidade Sênior",
+      "jobId": "19f1c73e-7ff6-4136-ad59-5251b4049990",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Londrina, PR, BR"
+    },
+    {
+      "jobId": "8739eb4f-7a23-4f3f-9424-ba73ecf247a3",
+      "careerPageIds": [
+        "default"
+      ],
+      "careerPageId": "default",
+      "displayName": "Analista de Conciliação em Marketplaces Júnior",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Analista de Dados Pleno",
+      "jobId": "790fd7ab-c7d7-46ac-aa90-4b56381c7968",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Analista de Endomarketing e Comunicação Interna Pleno ",
+      "jobId": "b0e3ba8e-4f62-47f9-8aaf-56f9a0ad801e",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    },
+    {
+      "careerPageIds": [
+        "default"
+      ],
+      "careerPageId": "default",
+      "displayName": "Analista de Growth Júnior",
+      "jobId": "1def874d-f22c-4175-929e-6ea952dfcfa3",
+      "status": "published",
+      "workplaceType": "On-site",
+      "location": "Maringá, PR, BR"
+    }
+  ]
+}

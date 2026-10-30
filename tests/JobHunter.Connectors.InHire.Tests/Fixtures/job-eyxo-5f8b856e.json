@@ -1,0 +1,87 @@
+{
+  "careerPageId": "default",
+  "careerPageIds": [
+    "default"
+  ],
+  "contractType": [
+    "PJ"
+  ],
+  "createdAt": "2026-10-20T14:55:36.964Z",
+  "displayName": "Analista de Marketing de Influência Pleno (híbrido em POA)",
+  "lastPublishedAt": "2026-10-22T13:50:31.271Z",
+  "publishedAt": "2026-10-20T14:55:36.964Z",
+  "status": "published",
+  "updatedAt": "2026-10-22T13:50:31.271Z",
+  "jobId": "5f8b856e-f4a1-486c-94c2-385c18e483e7",
+  "workplaceType": "Hybrid",
+  "location": "Porto Alegre, RS, BR",
+  "locationComplement": "presencial 1x por semana ",
+  "salaryCurrency": "BRL",
+  "tenantName": "Eyxo Content Co.",
+  "description": "<p>Estamos buscando uma pessoa para atuar no time de <strong>marketing</strong>.</p><p><strong>Responsabilidades</strong></p><ul><li><p>Planejar campanhas com criadores de conteúdo;</p></li><li><p>Acompanhar indicadores &amp; resultados.</p></li></ul><p>Modelo híbrido, com encontros presenciais semanais.</p>",
+  "settings": {
+    "fields": [
+      "linkedin",
+      "salary",
+      "curriculum",
+      "workModel"
+    ],
+    "requiredFields": [
+      "linkedin",
+      "salary",
+      "workModel"
+    ]
+  },
+  "diversity": {
+    "questions": [
+      {
+        "id": "diversityGroup",
+        "answerType": "multipleChoice",
+        "required": false,
+        "title": "Grupos de diversidade"
+      },
+      {
+        "id": "genderIdentity",
+        "answerType": "singleChoice",
+        "required": false,
+        "title": "Identidade de gênero"
+      },
+      {
+        "id": "sexualOrientation",
+        "answerType": "singleChoice",
+        "required": false,
+        "title": "Orientação sexual"
+      },
+      {
+        "id": "colourAndEthnicity",
+        "answerType": "singleChoice",
+        "required": false,
+        "title": "Cor ou raça"
+      },
+      {
+        "id": "peopleWithDisability",
+        "answerType": "singleChoice",
+        "required": false,
+        "title": "Pessoas com deficiência"
+      },
+      {
+        "id": "peopleWithDisabilityAID",
+        "answerType": "longText",
+        "required": false,
+        "title": "Pessoas com deficiência - Auxílio"
+      },
+      {
+        "id": "peopleWithDisabilityCID",
+        "answerType": "shortText",
+        "required": false,
+        "title": "Pessoas com deficiência - CID"
+      },
+      {
+        "id": "peopleWithDisabilityMedicalReport",
+        "answerType": "fileUpload",
+        "required": false,
+        "title": "Pessoas com deficiência - Laudo médico"
+      }
+    ]
+  }
+}

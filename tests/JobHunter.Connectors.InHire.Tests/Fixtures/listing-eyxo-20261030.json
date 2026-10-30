@@ -1,0 +1,69 @@
+{
+  "tenantName": "Eyxo Content Co.",
+  "about": "<p>Texto institucional de exemplo.</p>",
+  "jobsPage": [
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Analista de Marketing de Influência Pleno (híbrido em POA)",
+      "jobId": "5f8b856e-f4a1-486c-94c2-385c18e483e7",
+      "status": "published",
+      "workplaceType": "Hybrid",
+      "location": "Porto Alegre, RS, BR"
+    },
+    {
+      "careerPageId": "default",
+      "displayName": "Banco de talentos | Eyxo",
+      "jobId": "2195c6bf-48f7-462e-8f7b-61a8991209ef",
+      "status": "published",
+      "workplaceType": "Remote",
+      "location": "BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Estágio em Redação (híbrido em POA) ",
+      "jobId": "9530aaa1-e092-480d-ab9a-07971533f0b7",
+      "status": "published",
+      "workplaceType": "Hybrid",
+      "location": "Porto Alegre, RS, BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Redação Pleno | foco em Social (híbrido POA)",
+      "jobId": "a301a7ed-4948-4e41-b49d-0c1f0e465079",
+      "status": "published",
+      "workplaceType": "Hybrid",
+      "location": "Porto Alegre, RS, BR"
+    },
+    {
+      "careerPageId": "default",
+      "careerPageIds": [
+        "default"
+      ],
+      "displayName": "Social BI Pleno (híbrido em POA)",
+      "jobId": "820fefa1-f0df-459f-9858-43e6575c241b",
+      "status": "published",
+      "workplaceType": "Hybrid",
+      "location": "Porto Alegre, RS, BR"
+    },
+    {
+      "careerPageIds": [
+        "default"
+      ],
+      "careerPageId": "default",
+      "displayName": "Social BI Pleno (híbrido em SP)",
+      "jobId": "6bd97d81-67ff-4827-9332-69c4a18f6c7c",
+      "status": "published",
+      "workplaceType": "Hybrid",
+      "location": "São Paulo, SP, BR"
+    }
+  ]
+}
