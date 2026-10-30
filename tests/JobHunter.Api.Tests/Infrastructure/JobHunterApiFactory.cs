@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using JobHunter.Api.Common.Connectors;
 using JobHunter.Api.Common.Endpoints;
 using JobHunter.Api.Common.Persistence;
+using JobHunter.Api.Features.Scanning.Shared;
 using JobHunter.Connectors.Abstractions;
 using JobHunter.Connectors.Abstractions.Sources;
 using JobHunter.Connectors.InHire;
@@ -58,12 +59,16 @@ public sealed class JobHunterApiFactory : WebApplicationFactory<Program>, IAsync
         return client;
     }
 
-    // Clears state shared by every test in the collection: database rows, scripted fake connectors and circuit breakers.
+    // Clears state shared by every test in the collection: database rows, scripted fake connectors, queued scans and circuit breakers.
     public async Task ResetAsync()
     {
         Fake.Reset();
         SecondFake.Reset();
         InHireHttp.Clear();
+        while (Services.GetRequiredService<ScanRequestQueue>().TryDequeue(out _))
+        {
+        }
+
         await Services.GetRequiredService<ConnectorCircuitStates>().CloseAllAsync(CancellationToken.None);
 
         await using var scope = Services.CreateAsyncScope();

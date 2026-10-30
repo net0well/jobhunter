@@ -58,6 +58,7 @@ internal sealed class SourceEndpoints : IEndpointGroup
             .WithSummary("Queues an immediate scan of the source")
             .Produces<TriggerSourceScan.Response>(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status503ServiceUnavailable);
 
         sources.MapDelete("/{id:guid}", async (Guid id, ISender sender, CancellationToken ct) =>

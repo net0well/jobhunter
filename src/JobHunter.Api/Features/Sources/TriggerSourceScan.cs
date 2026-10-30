@@ -36,6 +36,9 @@ internal static class TriggerSourceScan
             if (pausedUntil > now)
                 return Error.Unavailable(ConnectorInvoker.PausedCode, $"Connector {source.ConnectorKey} is paused until {pausedUntil:O}.");
 
+            if (await RunningScans.SourceIds(db, now).AnyAsync(id => id == source.Id, cancellationToken))
+                return Error.Conflict("Scan.AlreadyRunning", "This source is already being scanned.");
+
             var run = ScanRun.Start(source, now);
             db.ScanRuns.Add(run);
 

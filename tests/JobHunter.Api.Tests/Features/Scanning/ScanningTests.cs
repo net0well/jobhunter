@@ -305,6 +305,37 @@ public sealed class ScanningTests(JobHunterApiFactory factory) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
     }
 
+    [Fact]
+    public async Task TriggerScan_WhileTheSourceIsBeingScanned_ReturnsConflict()
+    {
+        var source = await AddSourceAsync(FakeConnector.Key, "acme");
+        using var client = factory.CreateApiClient();
+        await client.PostAsync($"/api/sources/{source.Id}/scan", null, Ct);
+
+        var second = await client.PostAsync($"/api/sources/{source.Id}/scan", null, Ct);
+
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+    }
+
+    [Fact]
+    public async Task ScanDueSources_SourceAlreadyBeingScanned_IsSkippedUntilTheRunIsStale()
+    {
+        var source = await AddSourceAsync(FakeConnector.Key, "acme");
+        factory.Fake.Tenants["acme"] = [Posting("backend")];
+        await using (var scope = factory.OpenDb())
+        {
+            scope.Db.ScanRuns.Add(ScanRun.Start(source, factory.Clock.GetUtcNow()));
+            await scope.Db.SaveChangesAsync(Ct);
+        }
+
+        var whileRunning = await SendAsync(new ScanDueSources.Command(BatchSize: 50));
+        factory.Clock.Advance(RunningScans.StaleAfter + TimeSpan.FromMinutes(1));
+        var afterStale = await SendAsync(new ScanDueSources.Command(BatchSize: 50));
+
+        Assert.Equal(0, whileRunning.Scanned);
+        Assert.Equal(1, afterStale.Scanned);
+    }
+
     private static SourcedPosting Posting(string externalId, string tenant = "acme") =>
         SourcedPostingBuilder.Default(tenant, externalId).WithTitle($"Developer {externalId}").Build();
 
