@@ -74,8 +74,7 @@ Options pattern com `ValidateDataAnnotations()` + `ValidateOnStart()`; `IOptions
       "SubmissionDelayMin": "00:02:00",
       "SubmissionDelayMax": "00:05:00",
       "DailySubmissionLimit": 5,
-      "NavigationTimeout": "00:00:30",
-      "ConfirmationTimeout": "00:00:20",
+      "RequestTimeout": "00:00:30",
       "ClosedAfterMissedScans": 2,
       "ReadTimeout": "00:01:00",
       "SubmitTimeout": "00:02:00"
@@ -133,6 +132,8 @@ public sealed class ApplicationsOptions
     public ApplicationMode DefaultMode { get; init; } = ApplicationMode.ReviewThenSubmit;
 }
 ```
+
+Opções próprias do InHire (`InHireOptions`, mesma seção): `ApiBaseUrl` (padrão `https://api.inhire.app/`), `RequestTimeout` (padrão 30 s) e `UserAgent` (padrão `JobHunter/1.0 (+https://github.com/net0well/jobhunter)`). Evidências de falha dos conectores vão para `Artifacts:RootPath/<connector>/<yyyy-MM-dd>/` (`IConnectorEvidenceStore`), resolvido a partir do content root.
 
 Opções comuns a todos os conectores (`ConnectorOptions`) são lidas pelo núcleo em `Connectors:<Key>` e usadas pelo `ConnectorRateLimiter`/`ConnectorInvoker`; opções específicas (ex.: `ConfirmationTimeout`) são lidas pelo próprio conector na mesma seção.
 

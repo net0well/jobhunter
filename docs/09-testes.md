@@ -57,7 +57,9 @@ Permite exercitar todo o pipeline (varredura → pontuação → preparação �
 ## 4. Conectores: fixtures e contrato
 
 - Fixtures reais (sem PII) em `Fixtures/`, uma por variação observada (vaga remota, híbrida, sem local, formulário com upload, com perguntas de múltipla escolha, página de captcha, página de vaga encerrada).
-- `FixtureRouter` intercepta todas as requisições do Playwright e responde com os arquivos; requisições não mapeadas falham o teste (garante que nenhum teste toca a internet).
+- Conectores HTTP (como o InHire) usam o `FixtureHttpHandler` do kit e conectores de navegador usam o `FixtureRouter`: os dois respondem com os arquivos e falham o teste em qualquer requisição não mapeada (nenhum teste toca a internet).
+- Evidências de falha vão para o `TemporaryEvidenceStore` do kit, que confirma que o caminho reportado existe.
+- O teste `Live` do InHire (`--filter-trait "Category=Live"`) lista `eyxo` e `db1` de verdade; roda só à mão.
 - `InHireContractTests` herda as classes do kit e fornece fixtures/URLs; o kit roda os mesmos testes para todos os conectores.
 - Verify guarda o snapshot dos DTOs parseados: mudança de layout aparece como diff legível.
 

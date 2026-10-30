@@ -40,7 +40,6 @@ Opcional, para ver traces e métricas localmente: adicionar o Aspire Dashboard s
 cp .env.example .env              # e defina POSTGRES_PASSWORD
 docker compose up -d
 dotnet build
-pwsh src/JobHunter.Api/bin/Debug/net10.0/playwright.ps1 install chromium
 dotnet ef database update --project src/JobHunter.Api
 dotnet run --project src/JobHunter.Api
 ```

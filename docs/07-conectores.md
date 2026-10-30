@@ -284,18 +284,19 @@ public static class InHireConnectorRegistration
 
     public static IServiceCollection AddInHireConnector(this IServiceCollection services, IConfiguration configuration)
     {
-        var section = configuration.GetSection("Connectors:InHire");
+        var section = configuration.GetSection($"Connectors:{Key}");
         if (!section.GetValue<bool>("Enabled"))
             return services;
 
         services.AddOptions<InHireOptions>().Bind(section).ValidateDataAnnotations().ValidateOnStart();
-        services.AddBrowserInfrastructure(configuration);
+        services.AddHttpClient(HttpClientName, (provider, http) => { /* base, timeout, User-Agent */ });
 
-        services.AddSingleton<IJobConnector, InHireConnector>();
+        services.AddSingleton<InHireApiClient>();
+        services.AddSingleton<InHireConnector>();
+        services.AddSingleton<IJobConnector>(provider => provider.GetRequiredService<InHireConnector>());
         services.AddKeyedSingleton<ITenantJobSource, InHireTenantSource>(Key);
         services.AddKeyedSingleton<IJobDetailsProvider, InHireDetailsProvider>(Key);
         services.AddKeyedSingleton<IApplicationChannel, InHireApplicationChannel>(Key);
-        services.AddKeyedSingleton<IAssistedApplicationChannel, InHireApplicationChannel>(Key);
 
         return services;
     }
@@ -365,7 +366,7 @@ internal sealed class ScanSourceHandler(
 | `ArtifactWriter` | Screenshot + HTML em `Artifacts/<connector>/<yyyy-MM-dd>/<operação>-<id>.{png,html}` |
 | `HtmlFormReader` | Lê `<form>` (via AngleSharp ou `page.EvaluateAsync`) e produz `FormField` "crus" que o conector refina com semântica |
 | `FormFiller` | Preenche `FieldValue` em uma página por `Key` usando os locators fornecidos pelo conector |
-| `FixtureRouter` | Para testes: intercepta requisições com `page.RouteAsync` e responde com arquivos de fixture |
+| `FixtureRouter` | Para testes: intercepta requisições com `page.RouteAsync` e responde com arquivos de fixture (conectores HTTP usam `FixtureHttpHandler` do kit) |
 | `BrowserOptions` | `Headless`, `MaxConcurrentPages`, `DefaultTimeout`, `SlowMo` |
 
 Conectores HTTP **não** referenciam este projeto.
